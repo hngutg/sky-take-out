@@ -1,13 +1,17 @@
+# spring boot 配置文件
+
 server:
   port: 8080
 
 spring:
   profiles:
-    active: dev
+    active: dev # 这里开启了 dev
+                # 因此 application-dev.yml 也是有效的
   main:
     allow-circular-references: true
   datasource:
     druid:
+    # 可以看到, 这里都是用的 application-dev.yml 中的信息
       driver-class-name: ${sky.datasource.driver-class-name}
       url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: ${sky.datasource.username}

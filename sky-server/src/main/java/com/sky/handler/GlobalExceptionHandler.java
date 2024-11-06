@@ -20,8 +20,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler
     public Result exceptionHandler(BaseException ex){
+        // 在这里, 负责捕获所有的异常
+        // BaseException 实际上是所有自定以的异常类的父类
         log.error("异常信息：{}", ex.getMessage());
-        return Result.error(ex.getMessage());
+        return Result.error(ex.getMessage()); // 给前端页面返回一个结果
     }
 
 }

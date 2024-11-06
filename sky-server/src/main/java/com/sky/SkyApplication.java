@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Slf4j
 public class SkyApplication {
     public static void main(String[] args) {
+        // 在此处, 开启后端任务
         SpringApplication.run(SkyApplication.class, args);
         log.info("server started");
     }
