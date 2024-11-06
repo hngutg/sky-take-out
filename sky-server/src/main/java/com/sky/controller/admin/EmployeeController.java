@@ -1,6 +1,8 @@
 package com.sky.controller.admin;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.None;
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
@@ -77,7 +79,7 @@ public class EmployeeController {
     /**
      * 退出
      *
-     * @return
+     * @return  注解, 说明该方法有返回值
      */
     @PostMapping("/logout")
     @ApiOperation("员工登出") // 同样, 也可以给类中的方法添加Swagger的注解, 使得生成的接口文档的可读性更好
@@ -85,4 +87,23 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 创建新的员工对象
+     * 提交过来的是一个 EmployeeDTO 的对象
+     * 
+     * @return 注解, 说明该方法有返回值
+    */
+    // 这个方法的请求方式为 Post, 因此需要在这里添加一个注解:
+    @PostMapping  // 这里不用给路径, 因为在所属的类 EmployeeController 中已经添加过了
+    @ApiOperation("新增员工")
+    public Result addNewEmployee(@RequestBody EmployeeDTO employeeDTO){
+        // 由于接收的是 json 形式的数据, 因此需要添加这个 @RequestBody 注解
+
+        log.info("新增员工: {}", employeeDTO);
+
+        // 调用 EmployeeService 中的方法来真的完成更新操作
+        employeeService.save(employeeDTO);
+
+        return Result.success();
+    }
 }
