@@ -3,6 +3,7 @@ package com.sky.service.impl;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
@@ -70,6 +71,9 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employeeDTO
     */
     public void save(EmployeeDTO employeeDTO) {
+        // 获取当前线程的ID
+        System.out.println("当前线程的ID: " + Thread.currentThread().getId());
+
         // 这里传过来的是一个 DTO 类型, 为了方便封装前端提交过来的数据
         // 但是传给持久层的时候, 还是建议使用实体类
         Employee employee = new Employee();
@@ -86,9 +90,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
         // 当前记录的创建人ID和修改人ID:  (当前登录用户的ID)
-        // TODO: employeeDTO 中是没有这个信息（当前登录用户的ID）的, 因此暂时写死为一个值, 之后进行修改
-        employee.setCreateUser(10L);
-        employee.setUpdateUser(10L);
+        //* 利用 ThreadLocal 中存储的上下文, 获取到当前登录用户的ID
+        employee.setCreateUser(BaseContext.getCurrentId());
+        employee.setUpdateUser(BaseContext.getCurrentId());
 
         // 之后, 插入数据
         //* 调用持久层 EmployeeMapper 实现插入

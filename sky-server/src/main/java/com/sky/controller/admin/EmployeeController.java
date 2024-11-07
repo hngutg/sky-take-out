@@ -99,6 +99,9 @@ public class EmployeeController {
     public Result addNewEmployee(@RequestBody EmployeeDTO employeeDTO){
         // 由于接收的是 json 形式的数据, 因此需要添加这个 @RequestBody 注解
 
+        // 获取当前线程的ID
+        System.out.println("当前线程的ID: " + Thread.currentThread().getId());
+
         log.info("新增员工: {}", employeeDTO);
 
         // 调用 EmployeeService 中的方法来真的完成更新操作
