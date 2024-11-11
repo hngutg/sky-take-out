@@ -19,7 +19,7 @@ spring:
 
 mybatis:
   #mapper配置文件
-  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath:mapper/*.xml # 这里是去指定扫描xml配置文件的路径
   type-aliases-package: com.sky.entity
   configuration:
     #开启驼峰命名

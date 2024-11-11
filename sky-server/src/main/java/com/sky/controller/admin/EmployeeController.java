@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.None;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
@@ -15,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -108,5 +111,24 @@ public class EmployeeController {
         employeeService.save(employeeDTO);
 
         return Result.success();
+    }
+
+    /**
+     * 员工分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
+    @GetMapping("/page") // 这一个get形式的请求, 且注意路径
+    @ApiOperation("员工分页查询")
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
+        // 注意, 前端提交过来的数据不是 json 类型的, 而是 query 类型   (不用添加那个 @RequestBody 注解) ————> 会自动实现封装, 将前端提交的数据封装为 EmployeePageQueryDTO 类型
+
+        log.info("员工分页查询, 参数为: {}", employeePageQueryDTO);
+
+        // 调用 Service 来实际进行查询
+        PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO); // 利用 EmployeeService 中的 pageQuery 方法来进行查询
+                                                                                 // 希望返回一个 PageResult 的对象
+
+        return Result.success(pageResult);
     }
 }

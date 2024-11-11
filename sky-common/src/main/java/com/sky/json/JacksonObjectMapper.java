@@ -37,6 +37,7 @@ public class JacksonObjectMapper extends ObjectMapper {
         //反序列化时，属性不存在的兼容处理
         this.getDeserializationConfig().withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
+        // 这里实际上就是针对于 LocalDateTime 等类型设计了 序列化器 和 反序列化器。
         SimpleModule simpleModule = new SimpleModule()
                 .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT)))
                 .addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT)))

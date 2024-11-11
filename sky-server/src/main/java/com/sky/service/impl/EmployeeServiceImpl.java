@@ -1,20 +1,25 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +102,30 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 之后, 插入数据
         //* 调用持久层 EmployeeMapper 实现插入
         employeeMapper.insert(employee);
+    }
+
+    /**
+     * 分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        // 底层实际上是基于 MySQL 中的 limit 关键字来实现的查询: select * from employee limit 0,10
+
+        // 利用 pagehelper 来实现动态的分页
+        // 开始分页查询
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize()); // 给进去页码和每页的大小
+        // 这个插件的底层实际上是基于 mybatis 的拦截器来实现的 ————> 将后面的sql语句进行动态拼接
+        //* 底层实际上也是基于 ThreadLocal() 实现的 ————> 利用 ThreadLocal 存储上下文, 实现对于后续方法的影响
+
+        //* 调用持久层 EmployeeMapper 实现查询
+        Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO); // PageHelper 要求的后面这个方法的返回值是固定的: Page
+
+        // 再将 Page 转换为 PageResult
+        long total = page.getTotal();
+        List<Employee> records = page.getResult();
+        // 封装到对象中去
+        return new PageResult(total, records);
     }
 
 }
