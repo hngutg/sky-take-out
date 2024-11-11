@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.websocket.server.PathParam;
 
 /**
  * 员工管理
@@ -130,5 +133,26 @@ public class EmployeeController {
                                                                                  // 希望返回一个 PageResult 的对象
 
         return Result.success(pageResult);
+    }
+
+    //! Result后面所跟的泛型: 如果是查询操作, 那后端返回中 Result 的 dtat 内一般是会带有数据的, 因此需要指定泛型
+    //!                      而如果不是查询操作, 那后端只需要反一个 code 给前端即可, 用不到 data, 因此也不用指定泛型
+    /**
+     * 启用禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}") // 就是从这里获得的 status 参数
+    @ApiOperation("启用禁用员工账号")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        // status 是路径参数 ————> 添加路径注解 @PathVariable
+        // id 是通过地址栏传参获得的 ————> 仅保证参数名一直即可
+        log.info("启用禁用员工账号: {}, {}", status, id);
+
+        // 调用 Service 真正的实现业务功能
+        employeeService.startOrStop(status, id);
+
+        return Result.success();
     }
 }

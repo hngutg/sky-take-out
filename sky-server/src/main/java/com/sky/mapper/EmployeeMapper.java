@@ -39,4 +39,11 @@ public interface EmployeeMapper {
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
     // 这里是动态SQL语句就不方便使用注解的方式了(会使用到动态标签) ————> 写到映射文件中去
 
+    /**
+     * 根据主键动态修改属性
+     * @param employee
+     */
+    void update(Employee employee);
+    // 这里也是一个动态的SQL语句, 因此同上: 写到映射文件中去
+
 }
