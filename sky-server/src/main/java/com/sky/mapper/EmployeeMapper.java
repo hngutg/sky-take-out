@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface EmployeeMapper {
+    // Mapper 持久层
 
     /**
      * 根据用户名查询员工
@@ -45,5 +46,13 @@ public interface EmployeeMapper {
      */
     void update(Employee employee);
     // 这里也是一个动态的SQL语句, 因此同上: 写到映射文件中去
+
+    /**
+     * 根据 ID 查询到对应的 employee 的信息
+     * @param id
+     * @return
+     */
+    @Select("select * from employee where id = #{id}")
+    Employee getByID(Long id);
 
 }

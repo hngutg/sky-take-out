@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -152,6 +153,40 @@ public class EmployeeController {
 
         // 调用 Service 真正的实现业务功能
         employeeService.startOrStop(status, id);
+
+        return Result.success();
+    }
+
+    /**
+     * 根据ID查询员工信息
+     * @param id
+     * @return
+     */
+    @GetMapping("{id}")
+    @ApiOperation("根据ID查询员工信息")
+    public Result<Employee> getByID(@PathVariable Long id){
+        // 调用 Service 真正的实现业务功能
+        Employee employee = employeeService.getByID(id);
+        // 期望返回的是一个 Employee 对象
+
+        return Result.success(employee);
+    }
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping // 不用添加路径, 已经在类上添加过了
+    @ApiOperation("编辑员工信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        // 注意, 这里还是采用 EmployeeDTO 来接收前端传过来的数据
+        //       数据类型被定义为 json, 因此需要添加: @RequestBody
+
+        log.info("编辑员工信息");
+
+        // 调用 Service 真正的实现业务功能
+        employeeService.update(employeeDTO);
 
         return Result.success();
     }

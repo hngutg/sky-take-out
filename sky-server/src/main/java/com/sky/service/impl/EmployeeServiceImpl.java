@@ -152,4 +152,41 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.update(employee);
     }
 
+    /**
+     * 据ID查询员工信息
+     * @param id
+     * @return
+     */
+    public Employee getByID(Long id) {
+
+        //* 调用持久层 EmployeeMapper 实现查询
+        Employee employee = employeeMapper.getByID(id); // 期望查出来一个 Employee 对象
+        // 简单处理一下, 不希望前端能看到密码
+        employee.setPassword("****");
+
+        return employee;
+    }
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     */
+    public void update(EmployeeDTO employeeDTO) {
+        
+        // 这里就可以利用前面所构建的 update 动态更新方法了
+
+        // 注意, update 更新所需要的数据类型为 Employee, 需要类型转换
+        // 对象的属性拷贝
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        // 再单独设置一下修改人和修改时间
+        employee.setUpdateTime(LocalDateTime.now());
+        // 可以像之前一样, 利用Thread保存上下文信息, 获取到当前的用户id
+        employee.setUpdateUser(BaseContext.getCurrentId()); // 在拦截器 JwtTokenAdminInterceptor.java 中获取到的
+
+        // 调用 Mapper 的 update 方法, 实现动态更新
+        employeeMapper.update(employee);
+    }
+
 }
