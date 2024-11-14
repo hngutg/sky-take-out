@@ -92,12 +92,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 设置密码:  (进行MD5加密后再进行存储)
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         // 创建时间/修改时间:   使用系统时间即可
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+        // employee.setCreateTime(LocalDateTime.now());
+        // employee.setUpdateTime(LocalDateTime.now());
         // 当前记录的创建人ID和修改人ID:  (当前登录用户的ID)
         //* 利用 ThreadLocal 中存储的上下文, 获取到当前登录用户的ID
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+        // employee.setCreateUser(BaseContext.getCurrentId());
+        // employee.setUpdateUser(BaseContext.getCurrentId());
+
+        //! 在设置了公共属性的赋值之后, 就不再需要在这里单独赋值了
 
         // 之后, 插入数据
         //* 调用持久层 EmployeeMapper 实现插入
@@ -181,9 +183,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         BeanUtils.copyProperties(employeeDTO, employee);
 
         // 再单独设置一下修改人和修改时间
-        employee.setUpdateTime(LocalDateTime.now());
+        // employee.setUpdateTime(LocalDateTime.now());
         // 可以像之前一样, 利用Thread保存上下文信息, 获取到当前的用户id
-        employee.setUpdateUser(BaseContext.getCurrentId()); // 在拦截器 JwtTokenAdminInterceptor.java 中获取到的
+        // employee.setUpdateUser(BaseContext.getCurrentId()); // 在拦截器 JwtTokenAdminInterceptor.java 中获取到的
+        //! 在设置了公共属性的赋值之后, 就不再需要在这里单独赋值了
 
         // 调用 Mapper 的 update 方法, 实现动态更新
         employeeMapper.update(employee);
