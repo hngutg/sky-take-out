@@ -8,3 +8,10 @@ sky:
     database: sky_take_out
     username: root
     password: 20000714@Lwh
+
+  # 阿里云OSS配置
+  alioss:
+    endpoint: oss-cn-qingdao.aliyuncs.com
+    accessKeyId: *****
+    accessKeySecret: *****
+    bucketName: web-hngutg-test1

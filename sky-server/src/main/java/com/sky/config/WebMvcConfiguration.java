@@ -50,6 +50,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      */
     @Bean
     public Docket docket() {
+        log.info("准备生成接口文档");
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title("苍穹外卖项目接口文档")
                 .version("2.0")
@@ -58,7 +59,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.sky.controller")) // 指定要扫描的包 ———— 指定生成接口需要扫描的包
+                .apis(RequestHandlerSelectors.basePackage("com.sky.controller")) // 指定要扫描的包 ———— 指定生成接口需要扫描的包(通过反射来解析这个包中的代码, 以生成接口文档)
                 .paths(PathSelectors.any())
                 .build();
         return docket;
@@ -69,11 +70,12 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * @param registry
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        log.info("开始设置静态资源映射");
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
-    // 扩展消息转换器方式: 重写父类 WebMvcConfigurationSupport 中的一个方法即可  (方法是固定的)
+    // 扩展消息转换器方式: 重写父类 WebMvcConfigurationSupport 中的一个方法(extendMessageConverters)即可  (方法是固定的)
     /**
      * 扩展 Spring MVC 框架的消息转换器 ————> 统一对后端返回给前端的数据进行处理
      * @param converters
@@ -87,14 +89,15 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         // 需要为消息转换器设置一个对象转换器
         // 对象转换器: 可以将java对象序列化为json数据
         converter.setObjectMapper(new JacksonObjectMapper()); // 这里是用到的自定义的 JacksonObjectMapper 类
+        // 在这个自定义的 对象转换器类JacksonObjectMapper 中, 实际上就是实现了java对象和json数据之间的转换 (序列化/反序列化)
+        //                                               类中指定了一些特定的数据, 那converter就会根据这些设定, 实现序列化和反序列化
 
         // 在创建了消息转换器 converter 之后, 还并没有交给框架, 框架不会去使用这个转换器
         // 需要将其加入到消息转换器的容器 converters 中去 ————> converters 所存放的就是整个 Spring MVC 框架所使用的消息转换器(集合)
-        
         // 之后, 将自己的消息转化器加入到容器中
         converters.add(0, converter);
         // 注意: converters 中是存在一些自带的消息转换器的。其中各个转换器之间是存在顺序的
-        //       排在最后一个, 默认是使用不到的
+        //       新加入的默认排在最后一个, 默认是使用不到的
         // 因此, 添加另一个参数 index, 修改自己所添加进去的转化器的顺序, 优先使用自己的消息转换器
     }
 }

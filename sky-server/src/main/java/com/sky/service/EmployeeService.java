@@ -19,7 +19,7 @@ public interface EmployeeService {
      * 新增员工
      * @param employeeDTO
     */
-    void save(EmployeeDTO employeeDTO);
+    void addNewEmployee(EmployeeDTO employeeDTO);
 
     /**
      * 分页查询方法

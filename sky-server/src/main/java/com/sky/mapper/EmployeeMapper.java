@@ -27,12 +27,12 @@ public interface EmployeeMapper {
 
     /**
      * 根据送入的 Employee 对象, 执行数据库的插入操作
-     * @param employee
+     * @param employee 这里的参数为 Employee 对象, 而不是传入时用于接收的DTO对象
     */
     @Insert("insert into employee (name, username, password, phone, sex, id_number, create_time, update_time, create_user, update_user) " + 
             "values" + 
             "(#{name},#{username},#{password},#{phone},#{sex},#{idNumber},#{createTime},#{updateTime},#{createUser},#{updateUser})")
-    @AutoFill(value = OperationType.INSERT)
+    @AutoFill(value = OperationType.INSERT) // 采用AOP实现自动填充, 并指定了自己的的操作类型为 INSERT
     void insert(Employee employee);
 
     /**
@@ -47,7 +47,7 @@ public interface EmployeeMapper {
      * 根据主键动态修改属性
      * @param employee
      */
-    @AutoFill(value = OperationType.UPDATE)
+    @AutoFill(value = OperationType.UPDATE) // 采用AOP实现自动填充, 并指定了自己的的操作类型为 UPDATE
     void update(Employee employee);
     // 这里也是一个动态的SQL语句, 因此同上: 写到映射文件中去
 

@@ -56,7 +56,7 @@ public class EmployeeController {
         log.info("员工登录：{}", employeeLoginDTO);
 
         // DTO对象(EmployeeLoginDTO)中包含的就是从前端传过来的信息(用户名、密码)
-        // 调用 sky-take-out-full\sky-take-out\sky-server\src\main\java\com\sky\service\impl\EmployeeServiceImpl.java 中的 login 函数, 执行员工的登录过程
+        // 调用 EmployeeServiceImpl.java 中的 login 函数, 执行员工的登录过程
         Employee employee = employeeService.login(employeeLoginDTO);
         // 如果登录成功(在数据库中找到了对应的员工, 且没有被禁用)
         // ————> 返回对应的员工对象
@@ -107,13 +107,14 @@ public class EmployeeController {
         // 由于接收的是 json 形式的数据, 因此需要添加这个 @RequestBody 注解
 
         // 获取当前线程的ID
-        System.out.println("当前线程的ID: " + Thread.currentThread().getId());
+        // System.out.println("当前线程的ID: " + Thread.currentThread().getId());
 
         log.info("新增员工: {}", employeeDTO);
 
         // 调用 EmployeeService 中的方法来真的完成更新操作
-        employeeService.save(employeeDTO);
+        employeeService.addNewEmployee(employeeDTO);
 
+        // 没有什么要传递回给前端的信息, 因此直接返回 Result.success() 即可
         return Result.success();
     }
 
@@ -122,10 +123,10 @@ public class EmployeeController {
      * @param employeePageQueryDTO
      * @return
      */
-    @GetMapping("/page") // 这一个get形式的请求, 且注意路径
+    @GetMapping("/page") // 这里是get形式的请求, 且注意路径
     @ApiOperation("员工分页查询")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
-        // 注意, 前端提交过来的数据不是 json 类型的, 而是 query 类型   (不用添加那个 @RequestBody 注解) ————> 会自动实现封装, 将前端提交的数据封装为 EmployeePageQueryDTO 类型
+        // 注意, 前端提交过来的数据不是 json 类型的, 而是 query 类型   (不用添加 @RequestBody 注解) ————> 会自动实现封装, 将前端提交的数据封装为 EmployeePageQueryDTO 类型
 
         log.info("员工分页查询, 参数为: {}", employeePageQueryDTO);
 
@@ -136,8 +137,8 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
-    //! Result后面所跟的泛型: 如果是查询操作, 那后端返回中 Result 的 dtat 内一般是会带有数据的, 因此需要指定泛型
-    //!                      而如果不是查询操作, 那后端只需要反一个 code 给前端即可, 用不到 data, 因此也不用指定泛型
+    //! Result后面所跟的泛型: 如果是查询操作, 那后端返回中 Result 的 data 内一般是会带有数据的, 因此需要指定泛型
+    //!                     而如果不是查询操作, 那后端只需要反一个 code 给前端即可, 用不到 data, 因此也不用指定泛型
     /**
      * 启用禁用员工账号
      * @param status
@@ -185,7 +186,7 @@ public class EmployeeController {
 
         log.info("编辑员工信息");
 
-        // 调用 Service 真正的实现业务功能
+        // 调用 Service 实现业务功能
         employeeService.update(employeeDTO);
 
         return Result.success();

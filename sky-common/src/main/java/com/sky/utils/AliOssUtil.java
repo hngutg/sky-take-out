@@ -22,8 +22,8 @@ public class AliOssUtil {
     /**
      * 文件上传
      *
-     * @param bytes
-     * @param objectName
+     * @param bytes 实际就是文件对象转换成的一个byte数组
+     * @param objectName 上传到阿里云后, 文件的名称
      * @return
      */
     public String upload(byte[] bytes, String objectName) {

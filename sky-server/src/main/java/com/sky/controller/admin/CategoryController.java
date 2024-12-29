@@ -18,7 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/admin/category")
-@Api(tags = "分类相关接口")
+@Api(tags = "分类相关接口") // 这里的注释是用于表明当前类的作用的(展示在knife4j所生成的接口文档上)
 @Slf4j
 public class CategoryController {
 
