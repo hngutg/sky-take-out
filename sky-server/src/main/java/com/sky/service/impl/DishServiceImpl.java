@@ -106,10 +106,67 @@ public class DishServiceImpl implements DishService {
         }
 
         // 删除菜品
-        for (Long id : ids) {
-            dishMapper.deleteByID(id);
-            // 删除菜品关联的口味数据
-            dishFlavorMapper.deleteByDishID(id);
+        // for (Long id : ids) {
+        //     dishMapper.deleteByID(id);
+        // // 删除菜品关联的口味数据
+        // dishFlavorMapper.deleteByDishID(id);
+        // }
+
+        // 批量删除菜品
+        dishMapper.deleteByIDs(ids);
+        dishFlavorMapper.deleteByDishIDs(ids);
+    }
+
+    /**
+     * 根据ID来查询菜品以及对应的口味数据
+     * @param id
+     * @return
+     */
+    public DishVO getByIdWithFlavor(Long id) {
+        // 一共是要查两个表的
+
+        // 1. 根据ID查询菜品数据
+        Dish dish = dishMapper.getByID(id);
+
+        // 2. 根据菜品ID查询对应的口味数据
+        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishID(id);
+
+        // 3. 将查询结果封装到VO
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish, dishVO);
+        dishVO.setFlavors(dishFlavors);
+
+        return dishVO;
+    }
+
+    /**
+     * 根据ID修改菜品的基本信息, 以及对应的口味信息
+     * @param dishDTO
+     */
+    @Transactional
+    public void updateWithFlavor(DishDTO dishDTO) {
+        // 这里可能会操作到多张表
+
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+
+        // 修改菜品表的基本信息
+        dishMapper.update(dish); // 传入dish, 从设计层面来说, 更加合理
+
+        // 注意: 这里对于口味的操作实际上是十分复杂的
+        //? 如何对口味数据进行修改呢?
+        // ————> 先把当前菜品原本关联的口味数据全部删除, 之后再按照传来的信息, 重新执行插入
+        dishFlavorMapper.deleteByDishID(dishDTO.getId()); // 先把当前菜品原本关联的口味数据全部删除
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        // 之后再按照传来的信息, 重新执行插入
+        if (flavors != null && flavors.size() > 0) {
+            // 先遍历, 赋值所属菜品的ID
+            flavors.forEach(flavor -> {
+                flavor.setDishId(dishDTO.getId());
+            });
+
+            // 此时, 向口味表中插入数据 ————> 实现批量插入
+            dishFlavorMapper.insertBath(flavors);
         }
     }
 }
