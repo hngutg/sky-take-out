@@ -15,7 +15,8 @@ public class JwtUtil {
      *
      * @param secretKey jwt秘钥
      * @param ttlMillis jwt过期时间(毫秒)
-     * @param claims    设置的信息
+     * @param claims    设置的信息  即自定义的声明信息。你可以在 claims 中包含任何你需要在 JWT 中传输的信息。这个信息会被编码到 JWT 的 payload 部分，并在需要时被解码和使用。
+     *                  在生成 JWT 令牌时，claims 中的信息会被编码到 JWT 的 payload 部分。
      * @return
      */
     public static String createJWT(String secretKey, long ttlMillis, Map<String, Object> claims) {

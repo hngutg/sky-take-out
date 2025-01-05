@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.UserMapper">
+
+    <!--  useGeneratedKeys="true", 即获取到插入时所生成的主键值, 用于后面口味的插入 keyProperty="id", 即生成的主键值会返回给ID属性  -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into user (openid, name, phone, sex, id_number, avatar, create_time)
+            VALUES
+        (#{openid}, #{name}, #{phone}, #{sex}, #{idNumber}, #{avatar}, #{createTime})
+    </insert>
+
+</mapper>
