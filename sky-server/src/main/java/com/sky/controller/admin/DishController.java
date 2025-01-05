@@ -11,9 +11,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 菜品管理
@@ -27,6 +29,9 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     /**
      * 新增菜品
      * @param dishDTO
@@ -38,6 +43,10 @@ public class DishController {
         log.info("新增菜品: {}", dishDTO);
 
         dishService.addDishWithFlavor(dishDTO);
+
+        // 精确清理缓存
+        String key = "dish_" + dishDTO.getCategoryId();
+        cleanCache(key);
 
         return Result.success();
     }
@@ -71,6 +80,8 @@ public class DishController {
 
         dishService.deleteBatch(ids);
 
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
@@ -94,6 +105,8 @@ public class DishController {
         // 在修改菜品信息时, 是可能同时修改一些口味信息的
         dishService.updateWithFlavor(dishDTO);
 
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
@@ -107,5 +120,14 @@ public class DishController {
     public Result<List<Dish>> list(Long categoryId){
         List<Dish> list = dishService.list(categoryId);
         return Result.success(list);
+    }
+
+    /**
+     * 将清理redis缓存的方法抽取出来
+     * @param pattern 这里实际上是传入的一个模式
+     */
+    private void cleanCache(String pattern) {
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 }
